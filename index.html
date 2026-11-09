@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10263d">
+<title>RGB Detective - 10 Tantangan</title>
+<style>
+  :root {font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#172b42;background:#f1f5f9}
+  *{box-sizing:border-box} body{margin:0;padding:14px} [hidden]{display:none!important}
+  .container{max-width:740px;margin:auto} header{text-align:center;padding:12px 0 22px}
+  h1{font-size:clamp(26px,6vw,37px);margin:0 0 5px} h2{font-size:19px;margin:0 0 12px}
+  .sub,.muted{font-size:13px;color:#62758b;line-height:1.6}.card{padding:19px;background:white;border:1px solid #dde7f1;border-radius:17px;margin-bottom:13px}
+  label{display:block;font-size:14px;font-weight:750;margin-bottom:6px}.field{margin-bottom:14px}
+  input[type=text],input[type=number]{min-height:44px;width:100%;border:1px solid #c8d5e2;border-radius:9px;padding:9px;font-size:16px;color:#14263c;background:white}
+  button{border:0;border-radius:10px;padding:12px 14px;min-height:45px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation}
+  button:disabled{opacity:.5;cursor:not-allowed}.primary{color:white;background:#106d85}.secondary{color:#173e53;background:#e5eff4}.full{width:100%}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}.actions button{flex:1;min-width:130px}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}.stat{background:white;border:1px solid #dde7f1;padding:13px;border-radius:12px}.stat small{display:block;color:#64748b;font-size:12px}.stat strong{display:block;font-size:22px}
+  .progress{height:9px;border-radius:6px;background:#dde8f0;overflow:hidden;margin-bottom:14px}.progress div{height:100%;background:#0d9c89;transition:width .2s}
+  .levelhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.tag{padding:6px 11px;border-radius:99px;background:#e1f5f2;color:#07685b;font-size:12px;font-weight:800}
+  .comparison{position:sticky;top:0;z-index:3;box-shadow:0 4px 15px #152a3e10}.colors{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .colorlabel{text-align:center;font-size:13px;font-weight:750;margin-bottom:6px}.swatch{height:140px;border-radius:11px;border:1px solid #0002}
+  .channel{margin:17px 0;border-bottom:1px solid #edf0f4;padding-bottom:12px}.channeltop{display:flex;align-items:center;justify-content:space-between;gap:15px}
+  .channeltop label{margin:0}.channeltop input{width:76px!important;text-align:center;font-weight:700}
+  input[type=range]{display:block;width:100%;height:33px;margin:9px 0;cursor:pointer;touch-action:pan-y} #rRange{accent-color:#e34b48}#gRange{accent-color:#29a65a}#bRange{accent-color:#3377e9}
+  .feedback{border-radius:11px;padding:14px;font-size:14px;line-height:1.5;background:#e9f4fb;color:#194e6a;margin:15px 0 8px}
+  .feedback.success{background:#ddf8e8;color:#17603f}.feedback.warning{background:#fff1d8;color:#805119}
+  .report{background:#fff;border:1px solid #d1deea;border-radius:17px;overflow:hidden;color:#173049}
+  .report-header{background:#102b43;color:#fff;padding:17px 18px}.report-header h2{margin:3px 0;font-size:21px}.report-header p{margin:0;font-size:11px;color:#cee3ee;text-transform:uppercase;letter-spacing:.08em}
+  .report-body{padding:17px}.student-line{font-size:13px;line-height:1.65;overflow-wrap:anywhere}.student-line strong{font-size:16px}
+  .big-score{text-align:center;background:#e8f5f2;border-radius:14px;padding:14px;margin:14px 0}.big-score strong{font-size:40px;color:#08786c;display:block;line-height:1.2}.big-score span{font-size:12px;color:#4b626b;font-weight:700}
+  .resultgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.resultitem{padding:9px;border:1px solid #dbe6ed;border-radius:9px;min-width:0}.resultitem .line1{display:flex;justify-content:space-between;font-size:12px;font-weight:800;gap:4px}.resultitem .line2{font-size:11px;color:#576d7e;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .reportfooter{font-size:11px;color:#64748b;margin-top:14px;border-top:1px solid #dfe7ed;padding-top:10px;line-height:1.55}
+  .preview{display:block;max-width:100%;border:1px solid #d2e1e9;border-radius:10px;margin-top:10px}
+  @media(max-width:480px){body{padding:9px}.card{padding:13px;border-radius:12px}.swatch{height:106px}.colorlabel{font-size:11px}.comparison{top:0}.stat strong{font-size:19px}.report-header{padding:14px}.report-body{padding:12px}.big-score strong{font-size:34px}.resultitem{padding:7px}.resultitem .line1{font-size:11px}.resultitem .line2{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="container">
+<header><h1>🎨 RGB Detective</h1><div class="sub">10 tantangan warna berbeda untuk setiap siswa · Informatika Kelas VII</div></header>
+
+<section class="card" id="setup">
+  <h2>Identitas Siswa</h2>
+  <p class="muted">Nama, kelas, dan nomor absen menentukan urutan warna. Identitas sama akan mendapatkan soal yang sama.</p>
+  <form id="startForm">
+    <div class="field"><label for="nama">Nama lengkap</label><input id="nama" type="text" required maxlength="80" autocomplete="name"></div>
+    <div class="field"><label for="kelas">Kelas</label><input id="kelas" type="text" required maxlength="20" placeholder="7A"></div>
+    <div class="field"><label for="absen">Nomor absen</label><input id="absen" type="number" min="1" max="99" required></div>
+    <button class="primary full" type="submit">Mulai 10 Tantangan</button>
+  </form>
+</section>
+
+<section id="game" hidden>
+  <div class="stats"><div class="stat"><small>Tantangan</small><strong id="levelNumber">1 / 10</strong></div><div class="stat"><small>Skor</small><strong id="score">0 / 1000</strong></div></div>
+  <div class="progress"><div id="progressFill"></div></div>
+  <div class="card"><div class="levelhead"><h2 id="levelName"></h2><span class="tag" id="difficulty"></span></div><p class="muted" id="levelDescription"></p><p class="muted" id="tolerance"></p></div>
+  <div class="card comparison"><div class="colors"><div><div class="colorlabel">🎯 TARGET</div><div class="swatch" id="targetBox"></div></div><div><div class="colorlabel">🎨 WARNA KAMU</div><div class="swatch" id="studentBox"></div></div></div></div>
+  <div class="card">
+    <h2>Kalibrasi RGB</h2><p class="muted">Geser atau ketik nilai R, G, dan B (0–255).</p>
+    <div class="channel"><div class="channeltop"><label for="rRange">🔴 Red (Merah)</label><input aria-label="Nilai merah" id="rNumber" type="number" min="0" max="255" value="128"></div><input aria-label="Pengatur merah" id="rRange" type="range" min="0" max="255" value="128"></div>
+    <div class="channel"><div class="channeltop"><label for="gRange">🟢 Green (Hijau)</label><input aria-label="Nilai hijau" id="gNumber" type="number" min="0" max="255" value="128"></div><input aria-label="Pengatur hijau" id="gRange" type="range" min="0" max="255" value="128"></div>
+    <div class="channel"><div class="channeltop"><label for="bRange">🔵 Blue (Biru)</label><input aria-label="Nilai biru" id="bNumber" type="number" min="0" max="255" value="128"></div><input aria-label="Pengatur biru" id="bRange" type="range" min="0" max="255" value="128"></div>
+    <p id="rgbValue" class="muted"></p>
+    <div class="actions"><button id="checkBtn" class="primary" type="button">Periksa Warna</button><button id="hintBtn" class="secondary" type="button">Petunjuk</button></div>
+    <div class="feedback" id="feedback" role="status" aria-live="polite"></div><p class="muted" id="attemptInfo"></p>
+    <div class="actions"><button id="skipBtn" class="secondary" type="button">Lewati (0 poin)</button><button id="nextBtn" class="primary" type="button" hidden>Tantangan Berikutnya →</button></div>
+  </div>
+</section>
+
+<section id="finish" hidden>
+  <div id="reportCard" class="report">
+    <div class="report-header"><p>Laporan Hasil • Informatika Kelas VII</p><h2>RGB DETECTIVE</h2><p>10 Tantangan Kalibrasi Warna</p></div>
+    <div class="report-body">
+      <div class="student-line"><strong id="reportName"></strong><div id="reportMeta"></div><div id="reportDate"></div></div>
+      <div class="big-score"><strong id="reportScore"></strong><span id="reportMessage"></span></div>
+      <div class="levelhead"><b>Rincian 10 Tantangan</b><span class="tag" id="reportCompleted"></span></div>
+      <div class="resultgrid" id="resultGrid"></div>
+      <div class="reportfooter">RGB Detective · SMP PAB 5 Patumbak<br>Hasil permainan offline. Simpan gambar ini lalu kirim kepada guru.</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h2>Simpan Hasil</h2><p class="muted">Kartu di atas bisa langsung di-screenshot. Tekan tombol unduh untuk menyimpan seluruh hasil sebagai gambar PNG, termasuk 10 nilai tantangan.</p>
+    <div class="actions"><button id="downloadBtn" class="primary" type="button">⬇ Unduh Hasil PNG</button><button id="restartBtn" class="secondary" type="button">Ulangi Soal</button><button id="changeBtn" class="secondary" type="button">Ganti Siswa</button></div>
+    <p id="downloadMessage" class="muted" role="status" aria-live="polite"></p>
+    <img id="pngPreview" class="preview" alt="Pratinjau kartu hasil PNG yang bisa disimpan" hidden>
+  </div>
+</section>
+</div>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const LEVELS = [
+  {name:'Warna Primer',difficulty:'Sangat Mudah',description:'Kenali merah, hijau, dan biru.',tolerance:60},
+  {name:'Warna Sekunder',difficulty:'Mudah',description:'Gabungkan dua warna cahaya.',tolerance:52},
+  {name:'Gradasi Abu-Abu',difficulty:'Mudah',description:'Seimbangkan ketiga kanal.',tolerance:45},
+  {name:'Dua Kanal',difficulty:'Sedang',description:'Atur intensitas dua warna.',tolerance:40},
+  {name:'Warna Hangat',difficulty:'Sedang',description:'Buat warna hangat.',tolerance:35},
+  {name:'Warna Dingin',difficulty:'Menantang',description:'Buat warna dingin.',tolerance:30},
+  {name:'Warna Pastel',difficulty:'Sulit',description:'Buat warna terang dan lembut.',tolerance:25},
+  {name:'Warna Gelap',difficulty:'Sulit',description:'Bedakan intensitas rendah.',tolerance:20},
+  {name:'Warna Redup',difficulty:'Sangat Sulit',description:'Bedakan nilai yang berdekatan.',tolerance:15},
+  {name:'RGB Master',difficulty:'Ahli',description:'Kalibrasi warna kompleks.',tolerance:10}
+];
+const clamp = (n,min=0,max=255) => Math.max(min,Math.min(max,n));
+const cssRGB = c => `rgb(${c[0]},${c[1]},${c[2]})`;
+const hashString = s => {let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0};
+const seededRandom = seed => () => {seed+=0x6D2B79F5;let t=seed;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296};
+function makeTargets(key){
+  const rng=seededRandom(hashString(key));
+  const ri=(a,b)=>Math.floor(rng()*(b-a+1))+a;
+  const c=[];
+  let a=[ri(0,20),ri(0,20),ri(0,20)];a[ri(0,2)]=ri(230,255);c.push(a);
+  a=[ri(220,255),ri(220,255),ri(220,255)];a[ri(0,2)]=ri(0,25);c.push(a);
+  const gray=ri(55,215);c.push([gray,gray,gray]);
+  a=[ri(110,250),ri(80,230),ri(0,65)];for(let i=2;i>0;i--){const j=ri(0,i);[a[i],a[j]]=[a[j],a[i]]}c.push(a);
+  c.push([ri(165,255),ri(45,175),ri(0,85)]);
+  c.push([ri(0,115),ri(100,225),ri(145,255)]);
+  c.push([ri(185,255),ri(155,235),ri(180,255)]);
+  c.push([ri(10,115),ri(10,115),ri(10,115)]);
+  const m=ri(85,180);c.push([clamp(m+ri(-28,28)),clamp(m+ri(-28,28)),clamp(m+ri(-28,28))]);
+  do{a=[ri(0,255),ri(0,255),ri(0,255)]}while(Math.max(...a)-Math.min(...a)<80||a.reduce((x,y)=>x+y,0)<100||a.reduce((x,y)=>x+y,0)>650);
+  c.push(a);return c;
+}
+let game=null, rgb=[128,128,128];
+const channels=[['rRange','rNumber'],['gRange','gNumber'],['bRange','bNumber']];
+function setChannel(i,v){if(game?.locked)return;const n=Number(v);if(!Number.isFinite(n))return;rgb[i]=clamp(Math.round(n));paint()}
+function paint(){channels.forEach(([range,num],i)=>{$(range).value=rgb[i];$(num).value=rgb[i]});$('studentBox').style.background=cssRGB(rgb);$('rgbValue').textContent=`Warna kamu: RGB(${rgb.join(', ')})`}
+channels.forEach(([range,num],i)=>{$(range).addEventListener('input',e=>setChannel(i,e.target.value));$(num).addEventListener('input',e=>{if(e.target.value!=='')setChannel(i,e.target.value)});$(num).addEventListener('change',e=>setChannel(i,e.target.value||0))});
+function lockControls(locked){channels.forEach(([range,num])=>{$(range).disabled=locked;$(num).disabled=locked});['checkBtn','hintBtn','skipBtn'].forEach(id=>$(id).disabled=locked)}
+$('startForm').addEventListener('submit',e=>{
+  e.preventDefault();const nama=$('nama').value.trim(),kelas=$('kelas').value.trim(),absen=$('absen').value.trim();if(!nama||!kelas||!absen)return;
+  const key=`${nama.toLowerCase()}|${kelas.toLowerCase()}|${Number(absen)}`;
+  game={nama,kelas,absen,targets:makeTargets(key),index:0,score:0,attempts:0,hints:0,locked:false,results:[],completedAt:null};
+  $('setup').hidden=true;$('finish').hidden=true;$('game').hidden=false;loadLevel();
+});
+function loadLevel(){
+  const level=LEVELS[game.index];game.attempts=0;game.hints=0;game.locked=false;
+  $('levelNumber').textContent=`${game.index+1} / 10`;$('score').textContent=`${game.score} / 1000`;
+  $('levelName').textContent=level.name;$('difficulty').textContent=level.difficulty;$('levelDescription').textContent=level.description;
+  $('tolerance').textContent=`Toleransi per kanal: ±${level.tolerance}`;$('progressFill').style.width=`${game.index*10}%`;
+  $('targetBox').style.background=cssRGB(game.targets[game.index]);rgb=[128,128,128];paint();lockControls(false);
+  $('feedback').className='feedback';$('feedback').textContent='Amati warna target, lalu sesuaikan RGB kamu.';
+  $('attemptInfo').textContent='Percobaan: 0 | Petunjuk: 0/2';$('nextBtn').hidden=true;
+  $('nextBtn').textContent=game.index===9?'Lihat Hasil Akhir':'Tantangan Berikutnya →';window.scrollTo(0,0);
+}
+function compare(t,m){const diffs=t.map((v,i)=>Math.abs(v-m[i]));const dist=Math.sqrt(diffs.reduce((s,v)=>s+v*v,0));return {maxError:Math.max(...diffs),similarity:Math.round((1-dist/(255*Math.sqrt(3)))*100)}}
+$('checkBtn').addEventListener('click',()=>{
+  if(!game||game.locked)return;game.attempts++;const target=game.targets[game.index],level=LEVELS[game.index],res=compare(target,rgb);
+  $('attemptInfo').textContent=`Percobaan: ${game.attempts} | Petunjuk: ${game.hints}/2`;
+  if(res.maxError<=level.tolerance){
+    const points=Math.max(30,100-(game.attempts-1)*8-game.hints*15);game.score+=points;
+    game.results.push({name:level.name,points,status:'Berhasil',attempts:game.attempts});
+    $('feedback').className='feedback success';$('feedback').textContent=`✅ Cocok! Kemiripan RGB ${res.similarity}%. +${points} poin. Target: RGB(${target.join(', ')})`;
+    finishLevel();
+  }else{$('feedback').className='feedback warning';$('feedback').textContent=`Kemiripan RGB: ${res.similarity}%. Selisih terbesar ${res.maxError}; target maksimal ${level.tolerance}. Coba lagi.`}
+});
+$('hintBtn').addEventListener('click',()=>{
+  if(!game||game.locked)return;if(game.hints>=2)return;
+  const diffs=game.targets[game.index].map((v,i)=>v-rgb[i]);const order=[0,1,2].sort((a,b)=>Math.abs(diffs[b])-Math.abs(diffs[a]));
+  const ch=order[game.hints],delta=diffs[ch],name=['Merah','Hijau','Biru'][ch];
+  const msg=Math.abs(delta)<=LEVELS[game.index].tolerance?`Nilai ${name} sudah cukup dekat.`:`Coba ${delta>0?'NAIKKAN':'TURUNKAN'} nilai ${name}.`;
+  game.hints++;$('feedback').className='feedback';$('feedback').textContent=`💡 ${msg} Petunjuk mengurangi 15 poin.`;
+  $('attemptInfo').textContent=`Percobaan: ${game.attempts} | Petunjuk: ${game.hints}/2`;
+  if(game.hints>=2)$('hintBtn').disabled=true;
+});
+$('skipBtn').addEventListener('click',()=>{
+  if(!game||game.locked)return;const target=game.targets[game.index];game.results.push({name:LEVELS[game.index].name,points:0,status:'Dilewati',attempts:game.attempts});
+  $('feedback').className='feedback warning';$('feedback').textContent=`Dilewati (0 poin). Target: RGB(${target.join(', ')})`;finishLevel();
+});
+function finishLevel(){game.locked=true;lockControls(true);$('nextBtn').hidden=false;$('score').textContent=`${game.score} / 1000`;$('progressFill').style.width=`${(game.index+1)*10}%`}
+$('nextBtn').addEventListener('click',()=>{if(!game||!game.locked)return;game.index++;if(game.index===10)showFinish();else loadLevel()});
+function scoreLabel(score){return score>=850?'RGB MASTER':score>=650?'SANGAT BAIK':score>=400?'TERUS BERLATIH':'SEMANGAT BELAJAR'}
+function showFinish(){
+  game.completedAt=new Date();$('game').hidden=true;$('finish').hidden=false;
+  $('reportName').textContent=game.nama;$('reportMeta').textContent=`Kelas ${game.kelas} · Absen ${game.absen}`;
+  $('reportDate').textContent=game.completedAt.toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'});
+  $('reportScore').textContent=`${game.score} / 1000`;$('reportMessage').textContent=scoreLabel(game.score);
+  $('reportCompleted').textContent=`${game.results.filter(x=>x.status==='Berhasil').length}/10 berhasil`;
+  const grid=$('resultGrid');grid.replaceChildren();game.results.forEach((res,i)=>{
+    const el=document.createElement('div');el.className='resultitem';
+    const a=document.createElement('div');a.className='line1';const l=document.createElement('span');l.textContent=`Level ${i+1}`;const p=document.createElement('span');p.textContent=`${res.points}/100`;a.append(l,p);
+    const b=document.createElement('div');b.className='line2';b.textContent=`${res.name} · ${res.status}`;el.append(a,b);grid.append(el);
+  });$('pngPreview').hidden=true;$('downloadMessage').textContent='';window.scrollTo(0,0);
+}
+$('restartBtn').addEventListener('click',()=>{if(!game)return;game.index=0;game.score=0;game.results=[];game.completedAt=null;$('finish').hidden=true;$('game').hidden=false;loadLevel()});
+$('changeBtn').addEventListener('click',()=>{game=null;$('finish').hidden=true;$('game').hidden=true;$('setup').hidden=false;window.scrollTo(0,0)});
+
+// PNG ekspor mandiri: tidak memakai library atau koneksi internet.
+function rounded(ctx,x,y,w,h,r,fill){ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
+function makeResultCanvas(){
+  const canvas=document.createElement('canvas');canvas.width=1000;canvas.height=1390;
+  const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Canvas tidak didukung browser');
+  ctx.fillStyle='#f1f5f9';ctx.fillRect(0,0,1000,1390);
+  rounded(ctx,48,48,904,1290,26,'#ffffff');rounded(ctx,48,48,904,190,26,'#102b43');ctx.fillStyle='#102b43';ctx.fillRect(48,190,904,48);
+  ctx.fillStyle='#c7dde9';ctx.font='bold 21px Arial';ctx.fillText('LAPORAN HASIL · INFORMATIKA KELAS VII',88,100);
+  ctx.fillStyle='#ffffff';ctx.font='bold 52px Arial';ctx.fillText('RGB DETECTIVE',88,165);ctx.font='22px Arial';ctx.fillText('10 Tantangan Kalibrasi Warna',90,205);
+  ctx.fillStyle='#64748b';ctx.font='20px Arial';ctx.fillText('NAMA SISWA',86,291);
+  // Nama panjang diskalakan agar tetap muat tanpa terpotong.
+  ctx.fillStyle='#173049';ctx.font='bold 35px Arial';
+  const name=game.nama.length>55?game.nama.slice(0,52)+'...':game.nama;
+  const nameW=ctx.measureText(name).width;if(nameW>820){ctx.save();ctx.translate(87,332);ctx.scale(820/nameW,1);ctx.fillText(name,0,0);ctx.restore()}else ctx.fillText(name,86,332);
+  ctx.font='24px Arial';ctx.fillText(`Kelas ${game.kelas}  ·  Nomor absen ${game.absen}`,88,377);
+  ctx.fillStyle='#64748b';ctx.font='20px Arial';ctx.fillText(game.completedAt.toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'}),88,413);
+  rounded(ctx,86,455,828,203,18,'#e8f5f2');ctx.fillStyle='#08786c';ctx.font='bold 92px Arial';ctx.textAlign='center';ctx.fillText(String(game.score),500,570);ctx.font='bold 25px Arial';ctx.fillText('DARI 1000 POIN',500,608);ctx.font='21px Arial';ctx.fillText(scoreLabel(game.score),500,639);ctx.textAlign='start';
+  ctx.fillStyle='#173049';ctx.font='bold 28px Arial';ctx.fillText('RINCIAN 10 TANTANGAN',86,719);
+  game.results.forEach((res,i)=>{
+    const col=i%2,row=Math.floor(i/2),x=86+col*422,y=744+row*89;
+    rounded(ctx,x,y,407,78,12,'#f4f8fa');
+    ctx.fillStyle='#173049';ctx.font='bold 22px Arial';ctx.fillText(`LEVEL ${i+1}`,x+17,y+30);
+    ctx.font='bold 23px Arial';ctx.textAlign='right';ctx.fillText(`${res.points}/100`,x+391,y+30);ctx.textAlign='start';
+    ctx.fillStyle='#64748b';ctx.font='18px Arial';ctx.fillText(`${res.name} · ${res.status}`,x+17,y+58);
+  });
+  ctx.strokeStyle='#d8e4ec';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(86,1230);ctx.lineTo(914,1230);ctx.stroke();
+  ctx.fillStyle='#64748b';ctx.font='19px Arial';ctx.fillText('RGB Detective · SMP PAB 5 Patumbak',86,1268);ctx.fillText('Hasil aktivitas offline · Simpan dan kirim gambar ini kepada guru.',86,1301);
+  return canvas;
+}
+$('downloadBtn').addEventListener('click',()=>{
+  if(!game||game.results.length!==10)return;
+  try{
+    const canvas=makeResultCanvas();
+    const png=canvas.toDataURL('image/png');
+    const safeName=game.nama.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,45)||'siswa';
+    const link=document.createElement('a');link.href=png;link.download=`RGB-Detective-${safeName}-${game.kelas.replace(/[^a-z0-9-]/gi,'')}.png`;document.body.append(link);link.click();link.remove();
+    $('pngPreview').src=png;$('pngPreview').hidden=false;
+    $('downloadMessage').textContent='Gambar PNG disiapkan. Jika browser HP tidak otomatis mengunduh, tekan lama gambar pratinjau di bawah lalu pilih Simpan Gambar.';
+  }catch(err){$('downloadMessage').textContent=`Gagal membuat PNG: ${err.message}. Kamu tetap bisa screenshot kartu hasil di atas.`}
+});
+</script>
+</body>
+</html>
